@@ -29,15 +29,22 @@ else
   BIN_DEVICE="hyper310"
 fi
 
-FPGA_SKUS=(
-  "sival"
-)
-# If OT_PROV_ORCHESTRATOR_PATH is set, then update the FPGA_SKUS to include the
-# SKUs that are supported by the FPGA.
-if [[ -n "${OT_PROV_ORCHESTRATOR_PATH}" ]]; then
-  FPGA_SKUS+=("cr01" "pi01" "ti01")
-  if [[ -n "${OT_PROV_PQ_EN}" ]]; then
-    FPGA_SKUS+=("ti04")
+if [[ -n "${FPGA_SKUS[*]:-}" ]]; then
+  _fpga_skus_env="${FPGA_SKUS[*]}"
+  unset FPGA_SKUS
+  read -r -a FPGA_SKUS <<< "${_fpga_skus_env}"
+  unset _fpga_skus_env
+else
+  FPGA_SKUS=(
+    "sival"
+  )
+  # If OT_PROV_ORCHESTRATOR_PATH is set, then update the FPGA_SKUS to include the
+  # SKUs that are supported by the FPGA.
+  if [[ -n "${OT_PROV_ORCHESTRATOR_PATH}" ]]; then
+    FPGA_SKUS+=("cr01" "pi01" "ti01")
+    if [[ -n "${OT_PROV_PQ_EN}" ]]; then
+      FPGA_SKUS+=("ti04")
+    fi
   fi
 fi
 
